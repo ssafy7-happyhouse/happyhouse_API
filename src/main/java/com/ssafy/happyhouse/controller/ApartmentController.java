@@ -3,13 +3,18 @@ package com.ssafy.happyhouse.controller;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ssafy.happyhouse.exception.ApartmentDealException;
 import com.ssafy.happyhouse.exception.ApartmentException;
@@ -83,6 +88,26 @@ public class ApartmentController {
 			model.addAttribute("messageDetail", "서버내에 에러가 발생했습니다.");
 			return "error";
 		}
-
 	}
+
+	@ResponseBody
+	@GetMapping
+	public ResponseEntity<?> findApartmentAll(){
+		try {
+			return new ResponseEntity<List<Apartment>>(apartmentService.findAllApt(), HttpStatus.OK);
+		} catch (ApartmentException |SQLException e) {
+			return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);	
+		} 
+	}
+	
+	@ResponseBody
+	@GetMapping("/{aptName}")
+	public ResponseEntity<?> findApartmentByName(@PathVariable String aptName){
+		try {
+			return new ResponseEntity<List<Apartment>>(apartmentService.findAptByName(aptName), HttpStatus.OK);
+		} catch (ApartmentException |SQLException e) {
+			return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);	
+		} 
+	}
+	
 }

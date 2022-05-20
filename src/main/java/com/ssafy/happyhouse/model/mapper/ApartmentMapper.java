@@ -11,4 +11,8 @@ public interface ApartmentMapper {
 	ArrayList<Apartment> aptList() throws ApartmentException, SQLException;
 
 	ArrayList<Apartment> selectList(String dongCode, String aptName) throws ApartmentException, SQLException;
+	
+	ArrayList<Apartment> findAllApt() throws ApartmentException, SQLException;
+	
+	ArrayList<Apartment> findAptByName(String aptName) throws ApartmentException, SQLException;
 }

@@ -62,6 +62,14 @@ public class ApartmentService {
 		return list;
 	}
 
+	public ArrayList<Apartment> findAllApt() throws ApartmentException, SQLException {
+		return apartmentMapper.findAllApt();
+	}
+
+	public ArrayList<Apartment> findAptByName(String aptName) throws ApartmentException, SQLException {
+		return apartmentMapper.findAptByName(aptName);
+	}
+	
 	private void aptSort(ArrayList<Apartment> list, String lat, String lng) {
 		double latDouble = Double.parseDouble(lat);
 		double lngDouble = Double.parseDouble(lng);
