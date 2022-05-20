@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.happyhouse.model.mapper.UserMapper">
+
+	<select id="login" parameterType="string" resultType="User">
+		select *
+		from user
+		where id = #{id} and password= #{password}
+	</select>
+
+	<select id="getMyInfo" parameterType="string" resultType="User">
+		select
+		*
+		from user
+		where id = #{id}
+	</select>
+
+	<select id="getMyPw" parameterType="string" resultType="string">
+		select
+		password
+		from user
+		where id = #{id} and name = #{name} and phone = #{phone}
+	</select>
+
+	<insert id="insert" parameterType="User">
+		insert into user
+		values(#{id},#{password},#{name},#{address},#{phone},#{favorite})
+	</insert>
+
+	<delete id="delete" parameterType="string">
+		delete from user where
+		id=#{id}
+	</delete>
+
+	<update id="update" parameterType="User">
+		update user set
+		id=#{id},
+		password=#{password}, name=#{name}, address=#{address},
+		phone=#{phone}, favorite=#{favorite}
+		where id=#{id}
+	</update>
+
+</mapper>

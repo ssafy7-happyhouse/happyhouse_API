@@ -1,0 +1,21 @@
+.apartment-list {
+    float: left;
+    margin: 20px 200px 20px 20px;
+    display: inline-block;
+}
+
+.apartment-list ul {
+    height: 700px;
+    overflow: auto;
+}
+
+
+.apartment-list hr {
+    width: 250px;
+    margin: 10px 0;
+}
+
+.map {
+    float: left;
+    width: 700px;
+}

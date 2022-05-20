@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.ssafy.happyhouse.model.mapper.SiDoDongMapper">
+
+	<select id="selectSidoList" resultType="SiDo">
+		select distinct sidoName, sidoCode
+		from sidocode
+	</select>
+
+	<select id="selectGugunList" parameterType="string" resultType="Gugun">
+		select distinct gugunName, gugunCode
+		from guguncode
+		where sidocode = #{sidoCode}
+	</select>
+
+	<select id="selectDongList" parameterType="string" resultType="Dong">
+		select distinct dongName, dongCode
+		from dongcode
+		where gugunCode = #{gugunCode}
+	</select>
+
+
+
+	<select id="searchDongList" parameterType="string" resultType="Dong">
+		select d.dongCode, g.gugunName, d.dongName 
+		from dongcode d
+		join guguncode g on d.gugunCode = g.gugunCode
+		where dongName like concat('%', #{dongName}, '%')
+	</select>
+</mapper>

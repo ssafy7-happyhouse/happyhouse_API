@@ -1,0 +1,19 @@
+.register {
+  max-width: 700px;
+  margin: 20px auto 20px auto;
+  background-color: lightblue;
+  border-radius: 10px;
+  padding: 30px;
+}
+
+.container {
+  padding: 30px;
+}
+
+.register-item {
+  margin: 15px;
+}
+
+.content {
+  min-height: 600px;
+}
