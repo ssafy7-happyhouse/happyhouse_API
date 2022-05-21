@@ -11,5 +11,13 @@
 		order by dealYear desc
 	</select>
 	
-
+	<select id="findAptDetail" parameterType="integer" resultType="ApartmentDetail">
+		select housedeal.aptCode, aptName, guguncode.gugunName, dongcode.dongName, jibun, buildYear, dealAmount, dealyear, dealMonth, area, floor from houseinfo
+		join housedeal on houseinfo.aptCode = housedeal.aptCode
+		join dongcode on dongcode.dongCode = houseinfo.dongCode
+		join guguncode on dongcode.gugunCode = guguncode .gugunCode
+		where houseinfo.aptCode = #{aptCode}
+		order by dealyear desc, dealMonth desc
+	</select>
+	
 </mapper>

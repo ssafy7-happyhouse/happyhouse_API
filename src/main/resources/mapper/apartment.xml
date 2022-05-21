@@ -39,7 +39,7 @@
 	</select>
 
 	<select id="findAptByName" parameterType="string" resultType="Apartment">
-		select aptCode, aptName
+		select aptCode, aptName, lat, lng
 		from houseinfo
 		where aptName like concat('%', #{aptName}, '%')
 		order by aptName
