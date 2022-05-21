@@ -10,6 +10,7 @@ import com.ssafy.happyhouse.exception.ApartmentDealException;
 import com.ssafy.happyhouse.exception.ApartmentException;
 import com.ssafy.happyhouse.model.dao.ApartmentDealDao;
 import com.ssafy.happyhouse.model.dto.ApartmentDeal;
+import com.ssafy.happyhouse.model.dto.ApartmentDetail;
 import com.ssafy.happyhouse.model.mapper.ApartmentDealMapper;
 
 @Service
@@ -20,6 +21,14 @@ public class ApartmentDealService {
 
 	public ArrayList<ApartmentDeal> dealList(int aptCode) throws ApartmentDealException, SQLException {
 		ArrayList<ApartmentDeal> list = apartmentDealMapper.dealList(aptCode);
+		if (list.size() == 0) {
+			throw new ApartmentDealException();
+		}
+		return list;
+	}
+	
+	public ArrayList<ApartmentDetail> findAptDetail(int aptCode) throws ApartmentDealException, SQLException {
+		ArrayList<ApartmentDetail> list = apartmentDealMapper.findAptDetail(aptCode);
 		if (list.size() == 0) {
 			throw new ApartmentDealException();
 		}

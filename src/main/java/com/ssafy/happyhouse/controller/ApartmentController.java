@@ -20,6 +20,7 @@ import com.ssafy.happyhouse.exception.ApartmentDealException;
 import com.ssafy.happyhouse.exception.ApartmentException;
 import com.ssafy.happyhouse.model.dto.Apartment;
 import com.ssafy.happyhouse.model.dto.ApartmentDeal;
+import com.ssafy.happyhouse.model.dto.ApartmentDetail;
 import com.ssafy.happyhouse.service.ApartmentDealService;
 import com.ssafy.happyhouse.service.ApartmentService;
 
@@ -87,6 +88,17 @@ public class ApartmentController {
 			model.addAttribute("message", "[에러] 서버 에러");
 			model.addAttribute("messageDetail", "서버내에 에러가 발생했습니다.");
 			return "error";
+		}
+	}
+	
+	@GetMapping("/deal/{aptCode}")
+	public ResponseEntity<?> findAptDetail(@PathVariable String aptCode) {
+		int aptCodeNum = Integer.parseInt(aptCode);
+
+		try {
+			return new ResponseEntity<List<ApartmentDetail>>(apartmentDealService.findAptDetail(aptCodeNum), HttpStatus.OK);
+		} catch (ApartmentDealException | SQLException e) {
+			return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);	
 		}
 	}
 
