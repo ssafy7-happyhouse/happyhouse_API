@@ -1,9 +1,11 @@
 package com.ssafy.happyhouse.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -14,25 +16,35 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.ssafy.happyhouse.model.dto.Comment;
+import com.ssafy.happyhouse.model.dto.LoginUser;
 import com.ssafy.happyhouse.model.dto.User;
+import com.ssafy.happyhouse.service.JwtService;
 import com.ssafy.happyhouse.service.UserService;
 
-@Controller
+@RestController
 @RequestMapping("/user")
 public class UserController {
 
 	@Autowired
 	private UserService service;
+	
+	@Autowired
+	private JwtService jwtService;
 
 	/**
 	 * 로그인
@@ -40,15 +52,30 @@ public class UserController {
 	 * @throws Exception
 	 */
 	@PostMapping("/login")
-	public String login(String id, String password, HttpSession session) throws Exception {
-		User dto = service.login(id, password);
-
-		if (dto != null) {
-			session.setAttribute("loginInfo", dto);
-			return "redirect:/";
-		} else {
-			return "redirect:/";
+	public ResponseEntity<Map<String, Object>> login(@RequestBody LoginUser loginUser, HttpSession session){
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = null;
+		
+		
+		try {
+			User user = service.login(loginUser.getId(), loginUser.getPassword());
+			if (user != null) {
+				String token = jwtService.create("userid", user.getId() , "access-token");
+				session.setAttribute("loginInfo", user);
+				resultMap.put("access-token", token);
+				resultMap.put("message", "success");
+				status = HttpStatus.ACCEPTED;
+			} else {
+				resultMap.put("message", "fail");
+				status = HttpStatus.ACCEPTED;
+			}
+		}catch(Exception e) {
+			resultMap.put("message", e.getMessage());
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
+		
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+
 
 	}
 
@@ -71,12 +98,12 @@ public class UserController {
 	 * @throws Exception
 	 */
 	@PostMapping("/signUp")
-	public String signUp(User user, Model model, RedirectAttributes redirectAttributes) throws Exception {
+	public ResponseEntity<?> signUp(@RequestBody User user) throws Exception {
 		// 여기서 유사성 체크
 		Set<String> idSet = new HashSet<>();
 		String id = user.getId();
 		String password = user.getPassword();
-
+		
 		// 아이디에서 연속된 3글자를 얻어와서 set에 저장(중복제거를 위해)
 		for (int i = 0; i < id.length() - 2; i++) {
 			idSet.add(id.substring(i, i + 3));
@@ -89,21 +116,16 @@ public class UserController {
 
 			if(checkSimilarity(it.next(), password)) {
 				// 유사도가 높으면
-				
-				model.addAttribute("similarityMsg", "아이디와 비밀번호의 유사도가 높습니다.");
-//				redirectAttributes.addFlashAttribute("similarityMsg", "아이디와 비밀번호의 유사도가 높습니다.");
-				return "/user/register";
+				return new ResponseEntity<String>("similarlity", HttpStatus.CONFLICT);
 			}
 		}
 
 		int result = service.signUp(user);
 
 		if (result == 1) {
-			return "redirect:/";
+			return new ResponseEntity<String>("success", HttpStatus.OK);
 		} else {
-			model.addAttribute("message", "[에러] 회원 가입 실패");
-			model.addAttribute("messageDetail", "회원 가입에 실패했습니다. 정보를 다시 확인해주세요.");
-			return "/user/register";
+			return new ResponseEntity<String>("fail", HttpStatus.OK);
 		}
 	}
 	
