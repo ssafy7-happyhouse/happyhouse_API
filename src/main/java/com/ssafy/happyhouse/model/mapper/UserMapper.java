@@ -3,6 +3,7 @@ package com.ssafy.happyhouse.model.mapper;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.ssafy.happyhouse.model.dto.User;
+import com.ssafy.happyhouse.model.dto.UserInfo;
 
 @Mapper
 public interface UserMapper {
@@ -22,6 +23,6 @@ public interface UserMapper {
 	int delete(String id) throws Exception;
 
 	/** 회원정보 변경 */
-	int update(User dto) throws Exception;
+	int update(UserInfo userInfo) throws Exception;
 
 }
