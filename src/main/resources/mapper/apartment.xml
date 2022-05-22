@@ -45,4 +45,11 @@
 		order by aptName
 	</select>
 	
+	<select id="findAptByDongcode" parameterType="string" resultType="ApartmentDetail">
+		select aptCode, aptName, buildYear, guguncode.gugunName, dongcode.dongName, jibun  
+		from houseinfo 
+		join dongcode on houseinfo.dongCode = dongcode.dongCode
+		join guguncode on dongcode.gugunCode = guguncode.gugunCode
+		where dongcode.dongCode = #{dongCode}
+	</select>
 </mapper>
