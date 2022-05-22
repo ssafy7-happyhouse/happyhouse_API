@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ssafy.happyhouse.model.dto.User;
+import com.ssafy.happyhouse.model.dto.UserInfo;
+import com.ssafy.happyhouse.service.JwtService;
 import com.ssafy.happyhouse.service.UserService;
 
 @Controller
@@ -34,21 +37,38 @@ public class UserController {
 	@Autowired
 	private UserService service;
 
+	@Autowired
+	private JwtService jwtService;
+
 	/**
 	 * 로그인
 	 * 
 	 * @throws Exception
 	 */
 	@PostMapping("/login")
-	public String login(String id, String password, HttpSession session) throws Exception {
-		User dto = service.login(id, password);
+	public ResponseEntity<Map<String, Object>> login(@RequestBody LoginUser loginUser, HttpSession session) {
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = null;
 
-		if (dto != null) {
-			session.setAttribute("loginInfo", dto);
-			return "redirect:/";
-		} else {
-			return "redirect:/";
+		try {
+			User user = service.login(loginUser.getId(), loginUser.getPassword());
+			if (user != null) {
+				String token = jwtService.create("userid", user.getId(), "access-token");
+//				session.setAttribute("loginInfo", user);
+				resultMap.put("access-token", token);
+				resultMap.put("message", "success");
+				status = HttpStatus.ACCEPTED;
+			} else {
+				resultMap.put("message", "fail");
+				status = HttpStatus.ACCEPTED;
+			}
+		} catch (Exception e) {
+			resultMap.put("message", e.getMessage());
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
+
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+
 
 	}
 
@@ -87,7 +107,7 @@ public class UserController {
 			// set에 있는 원소 하나씩 빼서 비밀번호 문자열과 비교
 			// 만약, 비밀번호 문자열이 set 원소를 포함한다면, alert을 통해 경고창 띄우기
 
-			if(checkSimilarity(it.next(), password)) {
+			if (checkSimilarity(it.next(), password)) {
 				// 유사도가 높으면
 				
 				model.addAttribute("similarityMsg", "아이디와 비밀번호의 유사도가 높습니다.");
@@ -106,7 +126,7 @@ public class UserController {
 			return "/user/register";
 		}
 	}
-	
+
 	// 아이디 비밀번호 유사성 체크
 	private boolean checkSimilarity(String idPiece, String pw) {
 		int idPieceSize = 3;
@@ -126,23 +146,23 @@ public class UserController {
 						power *= 3;
 					}
 				}
-			}else {
-				pwPieceHash = 3 *(pwPieceHash - pw.charAt(i-1) * power) + pw.charAt(idPieceSize-1+i);
+			} else {
+				pwPieceHash = 3 * (pwPieceHash - pw.charAt(i - 1) * power) + pw.charAt(idPieceSize - 1 + i);
 			}
 
 			// 아이디 조각 해쉬값과 비밀번호 해쉬값이 같다면
-			if(idPieceHash == pwPieceHash) {
+			if (idPieceHash == pwPieceHash) {
 				boolean isFind = true;
 				// 우연히 해시값이 겹친 경우일 수 있으니 문자열 일치 여부 한번 더 검사
 				for (int j = 0; j < idPieceSize; j++) {
-					if(pw.charAt(i+j) != idPiece.charAt(j)) {
+					if (pw.charAt(i + j) != idPiece.charAt(j)) {
 						isFind = false;
 						break;
 					}
 				}
-				
-				//문자열이 같다면
-				if(isFind){
+
+				// 문자열이 같다면
+				if (isFind) {
 					return true;
 				}
 			}
@@ -192,24 +212,30 @@ public class UserController {
 	 * 
 	 * @throws Exception
 	 */
-	@GetMapping("/showInfo")
-	public ModelAndView showInfo(HttpSession session) throws Exception {
-		ModelAndView mav = new ModelAndView();
+	@GetMapping("/info/{userid}")
+	public ResponseEntity<Map<String, Object>> showInfo(@PathVariable String userid, HttpServletRequest request) {
+//		User loginInfo = (User) session.getAttribute("loginInfo");
+		Map<String, Object> resultMap = new HashMap();
+		HttpStatus status = null;
 
-		User loginInfo = (User) session.getAttribute("loginInfo");
-
-		User dto = service.showInfo(loginInfo.getId());
-
-		if (dto != null) {
-			mav.addObject("dto", dto);
-			mav.setViewName("/user/myInfo");
+		if (jwtService.isUsable(request.getHeader("access-token"))) {
+			try {
+				User loginInfo = service.showInfo(userid);
+				UserInfo userInfo = new UserInfo(loginInfo.getId(), loginInfo.getName(), loginInfo.getAddress(),
+						loginInfo.getPhone());
+				resultMap.put("userInfo", userInfo);
+				resultMap.put("message", "success");
+				status = HttpStatus.ACCEPTED;
+			} catch (Exception e) {
+				resultMap.put("message", e.getMessage());
+				status = HttpStatus.INTERNAL_SERVER_ERROR;
+			}
 		} else {
-			mav.addObject("message", "[에러] 내 정보 조회 실패");
-			mav.addObject("messageDetail", "올바르지 않은 요청입니다.");
-			mav.setViewName("/");
+			resultMap.put("message", "fail");
+			status = HttpStatus.ACCEPTED;
 		}
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 
-		return mav;
 	}
 
 	/**
@@ -217,19 +243,33 @@ public class UserController {
 	 * 
 	 * @throws Exception
 	 */
-	@PostMapping("/updateInfo")
-	public String updateInfo(User user, Model model) throws Exception {
-		int result = service.updateInfo(user);
+	@PutMapping("/updateInfo")
+	public ResponseEntity<Map<String, Object>> updateInfo(@RequestBody UserInfo userInfo, HttpServletRequest request)
+			throws Exception {
+		Map<String, Object> resultMap = new HashMap();
+		HttpStatus status = null;
 
-		if (result == 1) {
-			model.addAttribute("dto", user);
-
-			return "/user/myInfo";
+		if (jwtService.isUsable(request.getHeader("access-token"))) {
+			try {
+				System.out.println(userInfo.toString());
+				int result = service.updateInfo(userInfo);
+				if (result == 1) {
+					resultMap.put("message", "success");
+					status = HttpStatus.ACCEPTED;
+				} else {
+					resultMap.put("message", "fail");
+					status = HttpStatus.ACCEPTED;
+				}
+			} catch (Exception e) {
+				resultMap.put("message", e.getMessage());
+				status = HttpStatus.INTERNAL_SERVER_ERROR;
+			}
 		} else {
-			model.addAttribute("message", "[에러] 회원 정보 수정 실패");
-			model.addAttribute("messageDetail", "정보 수정에 실패했습니다. 입력한 내용을 다시 확인해주세요.");
-			return "/user/myInfo";
+			resultMap.put("message", "fail");
+			status = HttpStatus.ACCEPTED;
 		}
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+
 	}
 
 	/**

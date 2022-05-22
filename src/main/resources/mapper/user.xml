@@ -34,11 +34,10 @@
 		id=#{id}
 	</delete>
 
-	<update id="update" parameterType="User">
+	<update id="update" parameterType="UserInfo">
 		update user set
-		id=#{id},
-		password=#{password}, name=#{name}, address=#{address},
-		phone=#{phone}, favorite=#{favorite}
+		id=#{id}, name=#{name}, address=#{address},
+		phone=#{phone}
 		where id=#{id}
 	</update>
 

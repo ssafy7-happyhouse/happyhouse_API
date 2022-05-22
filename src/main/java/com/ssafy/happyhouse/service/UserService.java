@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.happyhouse.model.dto.User;
+import com.ssafy.happyhouse.model.dto.UserInfo;
 import com.ssafy.happyhouse.model.mapper.UserMapper;
 
 @Service
@@ -26,8 +27,8 @@ public class UserService {
 		return userMapper.getMyInfo(id);
 	}
 
-	public int updateInfo(User dto) throws Exception {
-		return userMapper.update(dto);
+	public int updateInfo(UserInfo userInfo) throws Exception {
+		return userMapper.update(userInfo);
 	}
 
 	public int deleteInfo(String id) throws Exception {
