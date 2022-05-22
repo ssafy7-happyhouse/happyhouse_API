@@ -2,27 +2,54 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.happyhouse.model.mapper.ApartmentMapper">
+<mapper
+	namespace="com.ssafy.happyhouse.model.mapper.ApartmentMapper">
 
-	<select id="aptList" parameterType="string" resultType="Apartment">
-		select aptCode, dongCode, dongName, aptName, buildYear, jibun, lat, lng
+	<select id="aptList" parameterType="string"
+		resultType="Apartment">
+		select aptCode, dongCode, dongName, aptName, buildYear,
+		jibun, lat, lng
 		from houseinfo
-		order by aptName		
+		order by aptName
 	</select>
-	
-	<select id="selectList" parameterType="string" resultType="Apartment">
-		select aptCode, dongCode, dongName, aptName, buildYear, jibun, lat, lng
+
+	<select id="selectList" parameterType="string"
+		resultType="Apartment">
+		select aptCode, dongCode, dongName, aptName, buildYear, jibun, lat,
+		lng
 		from houseinfo
-		where dongCode = #{dongCode} 
+		where dongCode = #{dongCode}
 		<include refid="keyword"></include>
 		order by aptName
 	</select>
-	
-	
+
+
 	<sql id="keyword">
 		<if test="aptName != null and aptName != ''">
 			and aptName like concat('%', #{aptName}, '%')
 		</if>
 	</sql>
 
+	<select id="findAllApt" resultType="Apartment">
+		select aptCode, dongCode,
+		dongName, aptName, buildYear, jibun, lat, lng
+		from houseinfo
+		order by
+		aptName
+	</select>
+
+	<select id="findAptByName" parameterType="string" resultType="Apartment">
+		select aptCode, aptName, lat, lng
+		from houseinfo
+		where aptName like concat('%', #{aptName}, '%')
+		order by aptName
+	</select>
+	
+	<select id="findAptByDongcode" parameterType="string" resultType="ApartmentDetail">
+		select aptCode, aptName, buildYear, guguncode.gugunName, dongcode.dongName, jibun  
+		from houseinfo 
+		join dongcode on houseinfo.dongCode = dongcode.dongCode
+		join guguncode on dongcode.gugunCode = guguncode.gugunCode
+		where dongcode.dongCode = #{dongCode}
+	</select>
 </mapper>

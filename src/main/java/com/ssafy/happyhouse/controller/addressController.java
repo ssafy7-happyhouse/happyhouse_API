@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,15 +67,12 @@ public class addressController {
 	
 	@ResponseBody
 	@GetMapping("/dong/{dongName}")
-	public List<Dong> search(@PathVariable String dongName) {
-		List<Dong> dongList = null;
+	public ResponseEntity<?> search(@PathVariable String dongName) {
 		try {
-			dongList = siDoDongService.searchDongList(dongName);
+			return new ResponseEntity<List<Dong>>(siDoDongService.searchDongList(dongName), HttpStatus.OK);
 		} catch (SiDoDongException | SQLException e) {
-			e.printStackTrace();
+			return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);
 		}
-
-		return dongList;
 	}
 }
 
