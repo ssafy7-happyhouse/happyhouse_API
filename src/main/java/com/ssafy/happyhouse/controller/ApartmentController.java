@@ -13,14 +13,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.ssafy.happyhouse.exception.ApartmentDealException;
 import com.ssafy.happyhouse.exception.ApartmentException;
 import com.ssafy.happyhouse.model.dto.Apartment;
 import com.ssafy.happyhouse.model.dto.ApartmentDeal;
 import com.ssafy.happyhouse.model.dto.ApartmentDetail;
+import com.ssafy.happyhouse.model.dto.AptSearch;
 import com.ssafy.happyhouse.service.ApartmentDealService;
 import com.ssafy.happyhouse.service.ApartmentService;
 
@@ -90,36 +95,70 @@ public class ApartmentController {
 			return "error";
 		}
 	}
-	
+
 	@GetMapping("/deal/{aptCode}")
-	public ResponseEntity<?> findAptDetail(@PathVariable String aptCode) {
+	public ResponseEntity<?> findAptDetail(@PathVariable String aptCode, String pageNum, String pageSize) {
 		int aptCodeNum = Integer.parseInt(aptCode);
+		PageHelper.startPage(Integer.parseInt(pageNum), Integer.parseInt(pageSize));
+
 
 		try {
-			return new ResponseEntity<List<ApartmentDetail>>(apartmentDealService.findAptDetail(aptCodeNum), HttpStatus.OK);
+			return new ResponseEntity<PageInfo<ApartmentDetail>>(
+					PageInfo.of(apartmentDealService.findAptDetail(aptCodeNum)),
+					HttpStatus.OK);
 		} catch (ApartmentDealException | SQLException e) {
-			return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);	
+			return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);
 		}
 	}
 
 	@ResponseBody
 	@GetMapping
-	public ResponseEntity<?> findApartmentAll(){
+	public ResponseEntity<?> findApartmentAll() {
 		try {
 			return new ResponseEntity<List<Apartment>>(apartmentService.findAllApt(), HttpStatus.OK);
-		} catch (ApartmentException |SQLException e) {
-			return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);	
-		} 
+		} catch (ApartmentException | SQLException e) {
+			return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);
+		}
 	}
-	
+
 	@ResponseBody
 	@GetMapping("/{aptName}")
-	public ResponseEntity<?> findApartmentByName(@PathVariable String aptName){
+	public ResponseEntity<?> findApartmentByName(@PathVariable String aptName) {
 		try {
 			return new ResponseEntity<List<Apartment>>(apartmentService.findAptByName(aptName), HttpStatus.OK);
-		} catch (ApartmentException |SQLException e) {
-			return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);	
-		} 
+		} catch (ApartmentException | SQLException e) {
+			return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);
+		}
 	}
-	
+
+	@ResponseBody
+	@GetMapping("/dong/{dongCode}")
+	public ResponseEntity<?> findAptByDongcode(@PathVariable String dongCode, String pageNum, String pageSize) {
+		PageHelper.startPage(Integer.parseInt(pageNum), Integer.parseInt(pageSize));
+
+		try {
+			return new ResponseEntity<PageInfo<ApartmentDetail>>(
+					PageInfo.of(apartmentService.findAptByDongcode(dongCode)),
+					HttpStatus.OK);
+		} catch (ApartmentException | SQLException e) {
+			return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);
+		}
+	}
+
+	@ResponseBody
+	@GetMapping("/dong/{dongCode}/name/{aptName}")
+	public ResponseEntity<?> findAptDetailByName(@PathVariable String aptName, @PathVariable String dongCode,
+			String pageNum, String pageSize) {
+		PageHelper.startPage(Integer.parseInt(pageNum), Integer.parseInt(pageSize));
+
+		try {
+			return new ResponseEntity<PageInfo<ApartmentDetail>>(
+					PageInfo.of(apartmentDealService
+							.findAptDetailByName(AptSearch.builder().aptName(aptName).dongCode(dongCode).build())),
+					HttpStatus.OK);
+		} catch (ApartmentDealException | SQLException e) {
+			return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);
+		}
+	}
+
 }

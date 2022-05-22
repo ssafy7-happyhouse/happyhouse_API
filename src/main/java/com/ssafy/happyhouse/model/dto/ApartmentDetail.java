@@ -14,6 +14,7 @@ public class ApartmentDetail {
 	private String aptName;
 	private String gugunName;
 	private String dongName;
+	private String dongCode;
 	private int buildYear;
 	private String jibun;
 	private String dealAmount;

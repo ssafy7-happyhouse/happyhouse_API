@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.happyhouse.exception.ApartmentException;
 import com.ssafy.happyhouse.model.dto.Apartment;
+import com.ssafy.happyhouse.model.dto.ApartmentDetail;
 import com.ssafy.happyhouse.model.mapper.ApartmentMapper;
 
 @Service
@@ -64,6 +65,10 @@ public class ApartmentService {
 
 	public ArrayList<Apartment> findAllApt() throws ApartmentException, SQLException {
 		return apartmentMapper.findAllApt();
+	}
+	
+	public ArrayList<ApartmentDetail> findAptByDongcode(String dongCode) throws ApartmentException, SQLException {
+		return apartmentMapper.findAptByDongcode(dongCode);
 	}
 
 	public ArrayList<Apartment> findAptByName(String aptName) throws ApartmentException, SQLException {
