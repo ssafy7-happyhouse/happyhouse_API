@@ -30,26 +30,41 @@
 		</if>
 	</sql>
 
-	<select id="findAllApt" resultType="Apartment">
-		select aptCode, dongCode,
-		dongName, aptName, buildYear, jibun, lat, lng
-		from houseinfo
-		order by
-		aptName
+	<select id="findAllApt" parameterType="AptFilter"
+		resultType="Apartment">
+		select aptCode, aptName, buildYear, dongCode, dongName, jibun, lat, lng, dealAmount as AvgAmount
+		from (select houseinfo.aptCode, aptName, dealYear, dealAmount, dealMonth, buildYear, dongCode, dongName, area, jibun, lat, lng, row_number() over (partition by houseinfo.aptCode order by dealYear desc, dealMonth desc) as r
+			from housedeal 
+			join houseinfo on houseinfo.aptCode = housedeal.aptCode) as hd
+		where hd.dealAmount >= #{minDealAmount} 
+		and #{maxDealAmount} > hd.dealAmount
+		and hd.area >= #{minArea} 
+		and #{maxArea} > hd.area
+		and hd.buildYear >= #{minBuildYear} 
+		and #{maxBuildYear} > hd.buildYear
+		and hd.r = 1
+		group by hd.aptCode
 	</select>
 
-	<select id="findAptByName" parameterType="string" resultType="Apartment">
+	<select id="findAptByName" parameterType="string"
+		resultType="Apartment">
 		select aptCode, aptName, lat, lng
 		from houseinfo
-		where aptName like concat('%', #{aptName}, '%')
+		where
+		aptName like concat('%', #{aptName}, '%')
 		order by aptName
 	</select>
-	
-	<select id="findAptByDongcode" parameterType="string" resultType="ApartmentDetail">
-		select aptCode, aptName, buildYear, guguncode.gugunName, dongcode.dongName, jibun  
-		from houseinfo 
-		join dongcode on houseinfo.dongCode = dongcode.dongCode
-		join guguncode on dongcode.gugunCode = guguncode.gugunCode
-		where dongcode.dongCode = #{dongCode}
+
+	<select id="findAptByDongcode" parameterType="string"
+		resultType="ApartmentDetail">
+		select aptCode, aptName, buildYear, guguncode.gugunName,
+		dongcode.dongName, jibun
+		from houseinfo
+		join dongcode on
+		houseinfo.dongCode = dongcode.dongCode
+		join guguncode on
+		dongcode.gugunCode = guguncode.gugunCode
+		where dongcode.dongCode =
+		#{dongCode}
 	</select>
 </mapper>

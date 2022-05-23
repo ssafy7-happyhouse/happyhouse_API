@@ -25,6 +25,7 @@ import com.ssafy.happyhouse.exception.ApartmentException;
 import com.ssafy.happyhouse.model.dto.Apartment;
 import com.ssafy.happyhouse.model.dto.ApartmentDeal;
 import com.ssafy.happyhouse.model.dto.ApartmentDetail;
+import com.ssafy.happyhouse.model.dto.AptFilter;
 import com.ssafy.happyhouse.model.dto.AptSearch;
 import com.ssafy.happyhouse.service.ApartmentDealService;
 import com.ssafy.happyhouse.service.ApartmentService;
@@ -101,11 +102,9 @@ public class ApartmentController {
 		int aptCodeNum = Integer.parseInt(aptCode);
 		PageHelper.startPage(Integer.parseInt(pageNum), Integer.parseInt(pageSize));
 
-
 		try {
 			return new ResponseEntity<PageInfo<ApartmentDetail>>(
-					PageInfo.of(apartmentDealService.findAptDetail(aptCodeNum)),
-					HttpStatus.OK);
+					PageInfo.of(apartmentDealService.findAptDetail(aptCodeNum)), HttpStatus.OK);
 		} catch (ApartmentDealException | SQLException e) {
 			return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);
 		}
@@ -113,9 +112,13 @@ public class ApartmentController {
 
 	@ResponseBody
 	@GetMapping
-	public ResponseEntity<?> findApartmentAll() {
+	public ResponseEntity<?> findApartmentAll(String minAmount, String maxAmount, String minArea, String maxArea,
+			String minBuildYear, String maxBuildYear) {
 		try {
-			return new ResponseEntity<List<Apartment>>(apartmentService.findAllApt(), HttpStatus.OK);
+			return new ResponseEntity<List<Apartment>>(apartmentService.findAllApt(AptFilter.builder()
+					.minDealAmount(Integer.parseInt(minAmount)).maxDealAmount(Integer.parseInt(maxAmount))
+					.maxArea(Integer.parseInt(maxArea)).minArea(Integer.parseInt(minArea))
+					.maxBuildYear(Integer.parseInt(maxBuildYear)).minBuildYear(Integer.parseInt(minBuildYear)).build()), HttpStatus.OK);
 		} catch (ApartmentException | SQLException e) {
 			return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);
 		}
@@ -138,8 +141,7 @@ public class ApartmentController {
 
 		try {
 			return new ResponseEntity<PageInfo<ApartmentDetail>>(
-					PageInfo.of(apartmentService.findAptByDongcode(dongCode)),
-					HttpStatus.OK);
+					PageInfo.of(apartmentService.findAptByDongcode(dongCode)), HttpStatus.OK);
 		} catch (ApartmentException | SQLException e) {
 			return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);
 		}

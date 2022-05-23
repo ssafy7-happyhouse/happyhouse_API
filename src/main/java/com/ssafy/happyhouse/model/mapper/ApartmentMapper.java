@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import com.ssafy.happyhouse.exception.ApartmentException;
 import com.ssafy.happyhouse.model.dto.Apartment;
 import com.ssafy.happyhouse.model.dto.ApartmentDetail;
+import com.ssafy.happyhouse.model.dto.AptFilter;
 
 public interface ApartmentMapper {
 
@@ -13,7 +14,7 @@ public interface ApartmentMapper {
 
 	ArrayList<Apartment> selectList(String dongCode, String aptName) throws ApartmentException, SQLException;
 	
-	ArrayList<Apartment> findAllApt() throws ApartmentException, SQLException;
+	ArrayList<Apartment> findAllApt(AptFilter aptFilter) throws ApartmentException, SQLException;
 	
 	ArrayList<Apartment> findAptByName(String aptName) throws ApartmentException, SQLException;
 	
