@@ -91,6 +91,7 @@ public class QnaBoardController {
 	
 	@PutMapping("{no}")
 	public ResponseEntity<String> updateQnaBoardbyNo(@PathVariable int no, @RequestBody QnaBoard qnaBoard) {
+		System.out.println(no);
 		qnaBoard.setNo(no);
 		if (qnaBoardService.updateQnaBoardbyNo(qnaBoard) == 1) {
 			return new ResponseEntity<String>("success", HttpStatus.OK);
