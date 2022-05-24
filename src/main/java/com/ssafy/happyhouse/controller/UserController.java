@@ -179,7 +179,7 @@ public class UserController {
 	/** 회원가입 페이지 이동 */
 	@GetMapping("/signUpView")
 	public String signUpView() {
-
+ 
 		return "/user/register";
 	}
 
@@ -277,6 +277,7 @@ public class UserController {
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 
 	}
+	
 
 	/**
 	 * 회원 정보 수정 페이지 이동

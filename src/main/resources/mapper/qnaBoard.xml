@@ -8,7 +8,8 @@
 		select no, user_id, title, board.content, board.registDate, comment.content as "comment_content" 
 		from board 
 		left outer join comment 
-		on board.no = comment.board_no;
+		on board.no = comment.board_no
+		order by no desc;
 	</select>
 	
 	<select id="selectBoardByNo" parameterType="int" resultType="QnaBoard">
