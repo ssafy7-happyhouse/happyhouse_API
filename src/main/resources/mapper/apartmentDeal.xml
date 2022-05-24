@@ -27,5 +27,12 @@
 		join guguncode on dongcode.gugunCode = guguncode .gugunCode
 		where houseinfo.aptName = #{aptName} and houseinfo.dongCode = #{dongCode}
 		order by dealyear desc, dealMonth desc
-	</select>	
+	</select>
+	
+	<select id="findAptAmountByAptCode" parameterType="integer" resultType="ApartmentDeal">
+		select aptCode, dealYear, dealMonth, avg(dealAmount) as dealAmount from housedeal 
+		where aptCode = #{aptCode}
+		group by dealYear, dealMonth
+		order by dealYear, dealMonth
+	</select>
 </mapper>

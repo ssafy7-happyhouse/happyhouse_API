@@ -15,4 +15,6 @@ public interface ApartmentDealMapper {
 	ArrayList<ApartmentDetail> findAptDetail(int aptCode) throws ApartmentDealException, SQLException;
 
 	ArrayList<ApartmentDetail> findAptDetailByName(AptSearch aptSearch) throws ApartmentDealException, SQLException;
+	
+	ArrayList<ApartmentDeal> findAptAmountByAptCode(int aptCode) throws ApartmentDealException, SQLException;
 }

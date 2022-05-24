@@ -19,5 +19,6 @@ public class Apartment {
 	private String lat;
 	private String lng;
 	private int distance;
-	private int AvgAmount;
+	private int lastAmount;
+	private int area;
 }

@@ -32,7 +32,7 @@
 
 	<select id="findAllApt" parameterType="AptFilter"
 		resultType="Apartment">
-		select aptCode, aptName, buildYear, dongCode, dongName, jibun, lat, lng, dealAmount as AvgAmount
+		select aptCode, aptName, buildYear, dongCode, dongName, jibun, lat, lng, dealAmount as lastAmount, area
 		from (select houseinfo.aptCode, aptName, dealYear, dealAmount, dealMonth, buildYear, dongCode, dongName, area, jibun, lat, lng, row_number() over (partition by houseinfo.aptCode order by dealYear desc, dealMonth desc) as r
 			from housedeal 
 			join houseinfo on houseinfo.aptCode = housedeal.aptCode) as hd
@@ -60,11 +60,13 @@
 		select aptCode, aptName, buildYear, guguncode.gugunName,
 		dongcode.dongName, jibun
 		from houseinfo
-		join dongcode on
+		join dongcode on 
 		houseinfo.dongCode = dongcode.dongCode
 		join guguncode on
 		dongcode.gugunCode = guguncode.gugunCode
 		where dongcode.dongCode =
 		#{dongCode}
 	</select>
+	
+
 </mapper>

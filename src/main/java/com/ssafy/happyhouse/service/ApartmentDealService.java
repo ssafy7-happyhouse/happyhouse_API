@@ -27,7 +27,7 @@ public class ApartmentDealService {
 		}
 		return list;
 	}
-	
+
 	public ArrayList<ApartmentDetail> findAptDetail(int aptCode) throws ApartmentDealException, SQLException {
 		ArrayList<ApartmentDetail> list = apartmentDealMapper.findAptDetail(aptCode);
 		if (list.size() == 0) {
@@ -35,9 +35,19 @@ public class ApartmentDealService {
 		}
 		return list;
 	}
-	
-	public ArrayList<ApartmentDetail> findAptDetailByName(AptSearch aptSearch) throws ApartmentDealException, SQLException {
+
+	public ArrayList<ApartmentDetail> findAptDetailByName(AptSearch aptSearch)
+			throws ApartmentDealException, SQLException {
 		ArrayList<ApartmentDetail> list = apartmentDealMapper.findAptDetailByName(aptSearch);
+		if (list.size() == 0) {
+			throw new ApartmentDealException();
+		}
+		return list;
+	}
+
+	public ArrayList<ApartmentDeal> findAptAmountByAptCode(int aptCode)
+			throws ApartmentDealException, SQLException {
+		ArrayList<ApartmentDeal> list = apartmentDealMapper.findAptAmountByAptCode(aptCode);
 		if (list.size() == 0) {
 			throw new ApartmentDealException();
 		}
