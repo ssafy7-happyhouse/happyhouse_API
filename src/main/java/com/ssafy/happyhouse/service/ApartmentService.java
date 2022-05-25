@@ -3,6 +3,7 @@ package com.ssafy.happyhouse.service;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,7 +68,15 @@ public class ApartmentService {
 	public ArrayList<Apartment> findAllApt(AptFilter aptFilter) throws ApartmentException, SQLException {
 		return apartmentMapper.findAllApt(aptFilter);
 	}
-	
+
+	public ArrayList<Apartment> findAllAptByDong(AptFilter aptFilter) throws ApartmentException, SQLException {
+		return apartmentMapper.findAllAptByDong(aptFilter);
+	}
+
+	public ArrayList<Apartment> findAllAptByGugun(AptFilter aptFilter) throws ApartmentException, SQLException {
+		return apartmentMapper.findAllAptByGugun(aptFilter);
+	}
+
 	public ArrayList<ApartmentDetail> findAptByDongcode(String dongCode) throws ApartmentException, SQLException {
 		return apartmentMapper.findAptByDongcode(dongCode);
 	}
@@ -75,7 +84,7 @@ public class ApartmentService {
 	public ArrayList<Apartment> findAptByName(String aptName) throws ApartmentException, SQLException {
 		return apartmentMapper.findAptByName(aptName);
 	}
-	
+
 	private void aptSort(ArrayList<Apartment> list, String lat, String lng) {
 		double latDouble = Double.parseDouble(lat);
 		double lngDouble = Double.parseDouble(lng);

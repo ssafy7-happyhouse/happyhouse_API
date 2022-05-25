@@ -25,9 +25,8 @@
 
 
 	<select id="searchDongList" parameterType="string" resultType="Dong">
-		select d.dongCode, g.gugunName, d.dongName 
-		from dongcode d
-		join guguncode g on d.gugunCode = g.gugunCode
+		select dongCode, gugunName, dongName, sidoName
+		from dongcode
 		where dongName like concat('%', #{dongName}, '%')
 	</select>
 </mapper>

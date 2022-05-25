@@ -124,6 +124,36 @@ public class ApartmentController {
 			return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);
 		}
 	}
+	
+	@ResponseBody
+	@GetMapping("/dong")
+	public ResponseEntity<?> findAllAptByDong(String minAmount, String maxAmount, String minArea, String maxArea,
+			String minBuildYear, String maxBuildYear) {
+		try {
+			return new ResponseEntity<List<Apartment>>(apartmentService.findAllAptByDong(AptFilter.builder()
+					.minDealAmount(Integer.parseInt(minAmount)).maxDealAmount(Integer.parseInt(maxAmount))
+					.maxArea(Integer.parseInt(maxArea)).minArea(Integer.parseInt(minArea))
+					.maxBuildYear(Integer.parseInt(maxBuildYear)).minBuildYear(Integer.parseInt(minBuildYear)).build()),
+					HttpStatus.OK);
+		} catch (ApartmentException | SQLException e) {
+			return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);
+		}
+	}
+	
+	@ResponseBody
+	@GetMapping("/gugun")
+	public ResponseEntity<?> findAllAptByGugun(String minAmount, String maxAmount, String minArea, String maxArea,
+			String minBuildYear, String maxBuildYear) {
+		try {
+			return new ResponseEntity<List<Apartment>>(apartmentService.findAllAptByGugun(AptFilter.builder()
+					.minDealAmount(Integer.parseInt(minAmount)).maxDealAmount(Integer.parseInt(maxAmount))
+					.maxArea(Integer.parseInt(maxArea)).minArea(Integer.parseInt(minArea))
+					.maxBuildYear(Integer.parseInt(maxBuildYear)).minBuildYear(Integer.parseInt(minBuildYear)).build()),
+					HttpStatus.OK);
+		} catch (ApartmentException | SQLException e) {
+			return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);
+		}
+	}
 
 	@ResponseBody
 	@GetMapping("/{aptName}")

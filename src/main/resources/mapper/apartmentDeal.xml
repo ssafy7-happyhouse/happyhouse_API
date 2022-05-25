@@ -2,35 +2,49 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.happyhouse.model.mapper.ApartmentDealMapper">
+<mapper
+	namespace="com.ssafy.happyhouse.model.mapper.ApartmentDealMapper">
 
-	<select id="dealList" parameterType="integer" resultType="ApartmentDeal">
+	<select id="dealList" parameterType="integer"
+		resultType="ApartmentDeal">
 		select dealAmount, dealYear, dealMonth, area, floor
-		from housedeal
-		where aptCode=#{aptCode} 
+		from
+		housedeal
+		where aptCode=#{aptCode}
 		order by dealYear desc
 	</select>
-	
-	<select id="findAptDetail" parameterType="integer" resultType="ApartmentDetail">
-		select housedeal.aptCode, aptName, guguncode.gugunName, dongcode.dongName, dongcode.dongCode, jibun, buildYear, dealAmount, dealyear, dealMonth, area, floor from houseinfo
+
+	<select id="findAptDetail" parameterType="integer"
+		resultType="ApartmentDetail">
+		select housedeal.aptCode, aptName, dongcode.sidoName,
+		dongcode.gugunName, dongcode.dongName, dongcode.dongCode, jibun,
+		buildYear, dealAmount, dealyear, dealMonth, area, floor from houseinfo
 		join housedeal on houseinfo.aptCode = housedeal.aptCode
-		join dongcode on dongcode.dongCode = houseinfo.dongCode
-		join guguncode on dongcode.gugunCode = guguncode .gugunCode
-		where houseinfo.aptCode = #{aptCode}
+		join dongcode
+		on dongcode.dongCode = houseinfo.dongCode
+		where houseinfo.aptCode =
+		#{aptCode}
 		order by dealyear desc, dealMonth desc
 	</select>
-	
-	<select id="findAptDetailByName" parameterType="AptSearch" resultType="ApartmentDetail">
-		select housedeal.aptCode, aptName, guguncode.gugunName, dongcode.dongName, jibun, buildYear, dealAmount, dealyear, dealMonth, area, floor from houseinfo
-		join housedeal on houseinfo.aptCode = housedeal.aptCode
-		join dongcode on dongcode.dongCode = houseinfo.dongCode
-		join guguncode on dongcode.gugunCode = guguncode .gugunCode
-		where houseinfo.aptName = #{aptName} and houseinfo.dongCode = #{dongCode}
+
+	<select id="findAptDetailByName" parameterType="AptSearch"
+		resultType="ApartmentDetail">
+		select housedeal.aptCode, aptName, dongcode.sidoName, dongcode.gugunName,
+		dongcode.dongName, jibun, buildYear, dealAmount, dealyear, dealMonth,
+		area, floor from houseinfo
+		join housedeal on houseinfo.aptCode =
+		housedeal.aptCode
+		join dongcode on dongcode.dongCode =
+		houseinfo.dongCode
+		where houseinfo.aptName = #{aptName} and
+		houseinfo.dongCode = #{dongCode}
 		order by dealyear desc, dealMonth desc
 	</select>
-	
-	<select id="findAptAmountByAptCode" parameterType="integer" resultType="ApartmentDeal">
-		select aptCode, dealYear, dealMonth, avg(dealAmount) as dealAmount from housedeal 
+
+	<select id="findAptAmountByAptCode" parameterType="integer"
+		resultType="ApartmentDeal">
+		select aptCode, dealYear, dealMonth, avg(dealAmount) as
+		dealAmount from housedeal
 		where aptCode = #{aptCode}
 		group by dealYear, dealMonth
 		order by dealYear, dealMonth
