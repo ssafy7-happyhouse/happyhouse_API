@@ -9,7 +9,7 @@
 		from board 
 		left outer join comment 
 		on board.no = comment.board_no
-		order by no desc;
+		order by no desc
 	</select>
 	
 	<select id="selectBoardByNo" parameterType="int" resultType="QnaBoard">

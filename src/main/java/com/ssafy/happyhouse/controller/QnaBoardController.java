@@ -1,5 +1,6 @@
 package com.ssafy.happyhouse.controller;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.ssafy.happyhouse.exception.ApartmentDealException;
+import com.ssafy.happyhouse.model.dto.ApartmentDetail;
+import com.ssafy.happyhouse.model.dto.AptSearch;
 import com.ssafy.happyhouse.model.dto.Comment;
 import com.ssafy.happyhouse.model.dto.QnaBoard;
 import com.ssafy.happyhouse.model.dto.QnaBoard2;
@@ -40,7 +46,7 @@ public class QnaBoardController {
 		QnaBoard article = qnaBoardService.selectBoardByNo(no);
 		return new ResponseEntity<QnaBoard>(article, HttpStatus.OK);
 	}
-	
+
 	@GetMapping("{no}/all")
 	public ResponseEntity<?> selectBoardCommentByNo(@PathVariable int no) {
 		QnaBoardComment article = qnaBoardService.selectBoardCommentByNo(no);
@@ -73,7 +79,7 @@ public class QnaBoardController {
 	@DeleteMapping("{no}")
 	public ResponseEntity<?> deleteQnaBoardbyNo(@PathVariable int no) {
 		qnaBoardService.deleteCommentbyNo(no);
-		
+
 		if (qnaBoardService.deleteQnaBoardbyNo(no) == 1) {
 			return new ResponseEntity<String>("success", HttpStatus.OK);
 		}
@@ -87,8 +93,7 @@ public class QnaBoardController {
 		}
 		return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);
 	}
-	
-	
+
 	@PutMapping("{no}")
 	public ResponseEntity<String> updateQnaBoardbyNo(@PathVariable int no, @RequestBody QnaBoard qnaBoard) {
 		System.out.println(no);
@@ -106,6 +111,16 @@ public class QnaBoardController {
 			return new ResponseEntity<String>("success", HttpStatus.OK);
 		}
 		return new ResponseEntity<String>("fail", HttpStatus.NO_CONTENT);
+	}
+
+	@GetMapping("/{pageNum}/{pageSize}")
+	public ResponseEntity<?> getListByPaging(@PathVariable int pageNum, @PathVariable int pageSize) {
+
+		PageHelper.startPage(pageNum, pageSize);
+//		List<QnaBoard2> list = qnaBoardService.selectAllList();
+
+		return new ResponseEntity<PageInfo<QnaBoard2>>(PageInfo.of(qnaBoardService.selectAllList()), HttpStatus.OK);
+
 	}
 
 }

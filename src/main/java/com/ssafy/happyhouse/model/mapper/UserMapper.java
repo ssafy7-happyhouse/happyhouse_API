@@ -8,10 +8,13 @@ import com.ssafy.happyhouse.model.dto.UserInfo;
 @Mapper
 public interface UserMapper {
 	/** 로그인 */
-	User login(String id, String password) throws Exception;
+	User login(String id) throws Exception;
 
 	/** 내정보 조회 */
 	User getMyInfo(String id) throws Exception;
+	
+	/** 내정보 조회 */
+	String findById(String id) throws Exception;
 
 	/** 비밀번호 찾기 */
 	String getMyPw(String id, String name, String phone) throws Exception;

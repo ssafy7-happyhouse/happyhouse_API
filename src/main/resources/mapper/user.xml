@@ -7,12 +7,19 @@
 	<select id="login" parameterType="string" resultType="User">
 		select *
 		from user
-		where id = #{id} and password= #{password}
+		where id = #{id} 
 	</select>
 
 	<select id="getMyInfo" parameterType="string" resultType="User">
 		select
 		*
+		from user
+		where id = #{id}
+	</select>
+	
+		<select id="findById" parameterType="string" resultType="String">
+		select
+		id
 		from user
 		where id = #{id}
 	</select>
