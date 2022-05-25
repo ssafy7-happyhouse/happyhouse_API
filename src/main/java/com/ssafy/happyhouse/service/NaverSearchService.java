@@ -24,6 +24,36 @@ import com.ssafy.happyhouse.model.dto.News;
 @Service
 public class NaverSearchService {
 
+	HashMap<String, String> dateMap = new HashMap<String, String>() {
+		{
+			put("Mon", "월요일");
+			put("Tue", "화요일");
+			put("Wed", "수요일");
+			put("Thu", "목요일");
+			put("Fri", "금요일");
+			put("Sat", "토요일");
+			put("Sun", "일요일");
+		}
+	};
+
+	HashMap<String, String> monthMap = new HashMap<String, String>() {
+		{
+			put("January", "1");
+			put("February", "2");
+			put("March", "3");
+			put("April", "4");
+			put("May", "5");
+			put("Jnue", "6");
+			put("July", "7");
+			put("August", "8");
+			put("September", "9");
+			put("October", "10");
+			put("November", "11");
+			put("December", "12");
+
+		}
+	};
+
 	public ArrayList<News> searchNews() {
 		String clientId = "2PJ7e2skZ8edF4LtP3Ig"; // 애플리케이션 클라이언트 아이디값"
 		String clientSecret = "mskOSGglaH"; // 애플리케이션 클라이언트 시크릿값"
@@ -53,6 +83,12 @@ public class NaverSearchService {
 				String link = (String) newsObj.get("link");
 				String description = ((String) newsObj.get("description")).replaceAll("&quot;", "\"")
 						.replaceAll("<b>", "").replaceAll("</b>", "");
+
+				String[] s = pubDate.split(" ");
+
+				pubDate = s[3] + "/" + monthMap.get(s[2]) + "/" + s[1] + " " + dateMap.get(s[0].substring(0, 3)) + " "
+						+ s[4].substring(0, 5);
+
 				newsList.add(News.builder().pubDate(pubDate).description(description).link(link).title(title).build());
 			}
 
