@@ -47,7 +47,6 @@
 		dealAmount from housedeal
 		where aptCode = #{aptCode}
 		group by dealYear, dealMonth
-		order by dealYear,
-		dealMonth
+		order by dealYear, dealMonth
 	</select>
 </mapper>

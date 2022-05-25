@@ -16,6 +16,10 @@ public interface ApartmentMapper {
 	
 	ArrayList<Apartment> findAllApt(AptFilter aptFilter) throws ApartmentException, SQLException;
 	
+	ArrayList<Apartment> findAllAptByDong(AptFilter aptFilter) throws ApartmentException, SQLException;
+	
+	ArrayList<Apartment> findAllAptByGugun(AptFilter aptFilter) throws ApartmentException, SQLException;
+
 	ArrayList<Apartment> findAptByName(String aptName) throws ApartmentException, SQLException;
 	
 	ArrayList<ApartmentDetail> findAptByDongcode(String dongCode) throws ApartmentException, SQLException;
