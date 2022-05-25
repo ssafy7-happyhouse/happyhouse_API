@@ -32,7 +32,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ssafy.happyhouse.model.dto.LoginUser;
+import com.ssafy.happyhouse.model.dto.QnaBoard2;
 import com.ssafy.happyhouse.model.dto.User;
+import com.ssafy.happyhouse.model.dto.User2;
 import com.ssafy.happyhouse.model.dto.UserInfo;
 import com.ssafy.happyhouse.service.JwtService;
 import com.ssafy.happyhouse.service.UserService;
@@ -313,6 +315,12 @@ public class UserController {
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 
 	}
+	
+	
+
+	
+	
+	
 
 	/**
 	 * 회원 정보 수정 페이지 이동
@@ -344,33 +352,51 @@ public class UserController {
 	 * 
 	 * @throws Exception
 	 */
-	@DeleteMapping("/deleteInfo")
-	public ModelAndView deleteInfo(HttpSession session, RedirectAttributes redirectAttributes) throws Exception {
-		ModelAndView mav = new ModelAndView();
+	@DeleteMapping("/deleteInfo/{userid}")
+	public ResponseEntity<?> deleteInfo(@PathVariable String userid) {
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = null;
 
-		User loginInfo = (User) session.getAttribute("loginInfo");
-
-		User dto = service.showInfo(loginInfo.getId());
-
-		int result = service.deleteInfo(dto.getId());
-
-		if (result == 1) {
-			if (session.getAttribute("loginInfo") != null) {
-				session.removeAttribute("loginInfo");
+		try {
+			int result = service.deleteInfo(userid);
+			if (result == 1) {
+				resultMap.put("message", "success");
+				status = HttpStatus.ACCEPTED;
+			} else {
+				resultMap.put("message", "fail");
+				status = HttpStatus.ACCEPTED;
 			}
-
-			session.invalidate();
-
-			mav.addObject("message", "회원 탈퇴가 완료되었습니다.");
-			mav.addObject("messageDetail", "그 동안 이용해주셔서 감사합니다. 언제든지 다시 찾아와 주세요!");
-			mav.setViewName("/result");
-		} else {
-			mav.addObject("message", "[에러] 알 수 없는 에러");
-			mav.addObject("messageDetail", "올바르지 않은 요청입니다.");
-			mav.setViewName("/error");
+		} catch (Exception e) {
+			resultMap.put("message", e.getMessage());
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
 
-		return mav;
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+//		ModelAndView mav = new ModelAndView();
+//
+//		User loginInfo = (User) session.getAttribute("loginInfo");
+//
+//		User dto = service.showInfo(loginInfo.getId());
+//
+//		int result = service.deleteInfo(dto.getId());
+//
+//		if (result == 1) {
+//			if (session.getAttribute("loginInfo") != null) {
+//				session.removeAttribute("loginInfo");
+//			}
+//
+//			session.invalidate();
+//
+//			mav.addObject("message", "회원 탈퇴가 완료되었습니다.");
+//			mav.addObject("messageDetail", "그 동안 이용해주셔서 감사합니다. 언제든지 다시 찾아와 주세요!");
+//			mav.setViewName("/result");
+//		} else {
+//			mav.addObject("message", "[에러] 알 수 없는 에러");
+//			mav.addObject("messageDetail", "올바르지 않은 요청입니다.");
+//			mav.setViewName("/error");
+//		}
+//
+//		return mav;
 	}
 
 }

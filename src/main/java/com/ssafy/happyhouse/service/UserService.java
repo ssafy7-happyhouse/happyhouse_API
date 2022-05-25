@@ -1,9 +1,12 @@
 package com.ssafy.happyhouse.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.happyhouse.model.dto.User;
+import com.ssafy.happyhouse.model.dto.User2;
 import com.ssafy.happyhouse.model.dto.UserInfo;
 import com.ssafy.happyhouse.model.mapper.UserMapper;
 
@@ -35,6 +38,8 @@ public class UserService {
 		return userMapper.update(userInfo);
 	}
 
+
+	
 	public int deleteInfo(String id) throws Exception {
 		return userMapper.delete(id);
 	}

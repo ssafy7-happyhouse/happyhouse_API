@@ -1,8 +1,12 @@
 package com.ssafy.happyhouse.model.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
+import com.ssafy.happyhouse.model.dto.QnaBoard2;
 import com.ssafy.happyhouse.model.dto.User;
+import com.ssafy.happyhouse.model.dto.User2;
 import com.ssafy.happyhouse.model.dto.UserInfo;
 
 @Mapper
@@ -27,5 +31,7 @@ public interface UserMapper {
 
 	/** 회원정보 변경 */
 	int update(UserInfo userInfo) throws Exception;
+	
+	
 
 }
