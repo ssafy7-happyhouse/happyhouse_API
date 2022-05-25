@@ -15,8 +15,8 @@ public class UserService {
 
 //	private UserDao dao = UserDao.getInstance();
 	
-	public User login(String id, String password) throws Exception {
-		return userMapper.login(id, password);
+	public User login(String id) throws Exception {
+		return userMapper.login(id);
 	}
 
 	public int signUp(User dto) throws Exception {
@@ -25,6 +25,10 @@ public class UserService {
 	
 	public User showInfo(String id) throws Exception {
 		return userMapper.getMyInfo(id);
+	}
+	
+	public String findById(String id) throws Exception {
+		return userMapper.findById(id);
 	}
 
 	public int updateInfo(UserInfo userInfo) throws Exception {
