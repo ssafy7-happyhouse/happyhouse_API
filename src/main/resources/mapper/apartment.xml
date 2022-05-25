@@ -32,15 +32,21 @@
 
 	<select id="findAllApt" parameterType="AptFilter"
 		resultType="Apartment">
-		select aptCode, aptName, buildYear, dongCode, dongName, jibun, lat, lng, dealAmount as lastAmount, area
-		from (select houseinfo.aptCode, aptName, dealYear, dealAmount, dealMonth, buildYear, dongCode, dongName, area, jibun, lat, lng, row_number() over (partition by houseinfo.aptCode order by dealYear desc, dealMonth desc) as r
-			from housedeal 
-			join houseinfo on houseinfo.aptCode = housedeal.aptCode) as hd
-		where hd.dealAmount >= #{minDealAmount} 
+		select aptCode, aptName, buildYear, dongCode, dongName,
+		jibun, lat, lng, dealAmount as lastAmount, area
+		from (select
+		houseinfo.aptCode, aptName, dealYear, dealAmount, dealMonth,
+		buildYear, dongCode, dongName, area, jibun, lat, lng, row_number()
+		over (partition by houseinfo.aptCode order by dealYear desc, dealMonth
+		desc) as r
+		from housedeal
+		join houseinfo on houseinfo.aptCode = housedeal.aptCode) as hd
+		where
+		hd.dealAmount >= #{minDealAmount}
 		and #{maxDealAmount} > hd.dealAmount
-		and hd.area >= #{minArea} 
+		and hd.area >= #{minArea}
 		and #{maxArea} > hd.area
-		and hd.buildYear >= #{minBuildYear} 
+		and hd.buildYear >= #{minBuildYear}
 		and #{maxBuildYear} > hd.buildYear
 		and hd.r = 1
 		group by hd.aptCode
@@ -57,16 +63,14 @@
 
 	<select id="findAptByDongcode" parameterType="string"
 		resultType="ApartmentDetail">
-		select aptCode, aptName, buildYear, guguncode.gugunName,
+		select aptCode, aptName, buildYear, dongcode.sidoName, dongcode.gugunName, dongcode.gugunName,
 		dongcode.dongName, jibun
 		from houseinfo
-		join dongcode on 
+		join dongcode on
 		houseinfo.dongCode = dongcode.dongCode
-		join guguncode on
-		dongcode.gugunCode = guguncode.gugunCode
 		where dongcode.dongCode =
 		#{dongCode}
 	</select>
-	
+
 
 </mapper>

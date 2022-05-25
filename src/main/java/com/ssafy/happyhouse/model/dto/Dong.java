@@ -16,4 +16,5 @@ public class Dong {
 	private String dongCode;
 	private String dongName;
 	private String gugunName;
+	private String sidoName;
 }
