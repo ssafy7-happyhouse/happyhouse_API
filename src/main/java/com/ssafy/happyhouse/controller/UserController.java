@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,8 +58,11 @@ public class UserController {
 		HttpStatus status = null;
 
 		try {
-			User user = service.login(loginUser.getId(), loginUser.getPassword());
-			if (user != null) {
+
+			User user = service.login(loginUser.getId());
+			// parameter로 받은 유저의 비밀번호와 DB에 저장된 암호화값 비교 (salt값을 따로 저장하지 않으므로 Bcrypt의 메서드를
+			// 이용하여 parameter로 받은 비밀번호와 hash값을 비교)
+			if (user != null && BCrypt.checkpw(loginUser.getPassword(), user.getPassword())) {
 				String token = jwtService.create("userid", user.getId(), "access-token");
 //				session.setAttribute("loginInfo", user);
 				resultMap.put("access-token", token);
@@ -74,7 +78,6 @@ public class UserController {
 		}
 
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
-
 
 	}
 
@@ -97,7 +100,10 @@ public class UserController {
 	 * @throws Exception
 	 */
 	@PostMapping("/signUp")
-	public String signUp(User user, Model model, RedirectAttributes redirectAttributes) throws Exception {
+	public ResponseEntity<?> signUp(@RequestBody User user) throws Exception {
+		Map<String, Object> hashMap = new HashMap<String, Object>();
+		HttpStatus status = null;
+
 		// 여기서 유사성 체크
 		Set<String> idSet = new HashSet<>();
 		String id = user.getId();
@@ -115,22 +121,29 @@ public class UserController {
 
 			if (checkSimilarity(it.next(), password)) {
 				// 유사도가 높으면
-				
-				model.addAttribute("similarityMsg", "아이디와 비밀번호의 유사도가 높습니다.");
+
+				hashMap.put("message", "similarityMsg");
+				status = HttpStatus.CONFLICT;
+
+//				model.addAttribute("similarityMsg", "아이디와 비밀번호의 유사도가 높습니다.");
 //				redirectAttributes.addFlashAttribute("similarityMsg", "아이디와 비밀번호의 유사도가 높습니다.");
-				return "/user/register";
+//				return "/user/register";
 			}
 		}
+
+		String hashPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+		user.setPassword(hashPassword);
 
 		int result = service.signUp(user);
 
 		if (result == 1) {
-			return "redirect:/";
+			hashMap.put("message", "success");
+			status = HttpStatus.ACCEPTED;
 		} else {
-			model.addAttribute("message", "[에러] 회원 가입 실패");
-			model.addAttribute("messageDetail", "회원 가입에 실패했습니다. 정보를 다시 확인해주세요.");
-			return "/user/register";
+			hashMap.put("message", "fail");
+			status = HttpStatus.ACCEPTED;
 		}
+		return new ResponseEntity<Map<String, Object>>(hashMap, status);
 	}
 
 	// 아이디 비밀번호 유사성 체크
@@ -179,7 +192,7 @@ public class UserController {
 	/** 회원가입 페이지 이동 */
 	@GetMapping("/signUpView")
 	public String signUpView() {
- 
+
 		return "/user/register";
 	}
 
@@ -245,6 +258,29 @@ public class UserController {
 	}
 
 	/**
+	 * 아이디 조회
+	 * 
+	 * @throws Exception
+	 */
+	@GetMapping("/id/{userid}")
+	public ResponseEntity<Map<String, Object>> findByKakaoId(@PathVariable String userid) {
+		Map<String, Object> resultMap = new HashMap();
+		HttpStatus status = null;
+
+		try {
+			String userId = service.findById(userid);
+			resultMap.put("userId", userId);
+			resultMap.put("message", "success");
+			status = HttpStatus.ACCEPTED;
+		} catch (Exception e) {
+			resultMap.put("message", e.getMessage());
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+
+	}
+
+	/**
 	 * 회원 정보 수정
 	 * 
 	 * @throws Exception
@@ -253,7 +289,7 @@ public class UserController {
 	public ResponseEntity<Map<String, Object>> updateInfo(@RequestBody UserInfo userInfo, HttpServletRequest request)
 			throws Exception {
 		Map<String, Object> resultMap = new HashMap();
-		HttpStatus status = null;
+		HttpStatus status = null; 
 
 		if (jwtService.isUsable(request.getHeader("access-token"))) {
 			try {
@@ -277,7 +313,6 @@ public class UserController {
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 
 	}
-	
 
 	/**
 	 * 회원 정보 수정 페이지 이동
