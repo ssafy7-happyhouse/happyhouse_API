@@ -96,7 +96,8 @@ public class ApartmentController {
 			return "error";
 		}
 	}
-
+	
+	@ResponseBody
 	@GetMapping("/deal/{aptCode}")
 	public ResponseEntity<?> findAptDetail(@PathVariable String aptCode, String pageNum, String pageSize) {
 		int aptCodeNum = Integer.parseInt(aptCode);

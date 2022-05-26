@@ -18,7 +18,7 @@
 		resultType="ApartmentDetail">
 		select housedeal.aptCode, aptName, dongcode.sidoName,
 		dongcode.gugunName, dongcode.dongName, dongcode.dongCode, jibun,
-		buildYear, dealAmount, dealyear, dealMonth, area, floor from houseinfo
+		buildYear, dealAmount, dealyear, dealMonth, area, floor, lat, lng from houseinfo
 		join housedeal on houseinfo.aptCode = housedeal.aptCode
 		join dongcode
 		on dongcode.dongCode = houseinfo.dongCode
@@ -31,7 +31,7 @@
 		resultType="ApartmentDetail">
 		select housedeal.aptCode, aptName, dongcode.sidoName, dongcode.gugunName,
 		dongcode.dongName, jibun, buildYear, dealAmount, dealyear, dealMonth,
-		area, floor from houseinfo
+		area, floor, lat, lng from houseinfo
 		join housedeal on houseinfo.aptCode =
 		housedeal.aptCode
 		join dongcode on dongcode.dongCode =

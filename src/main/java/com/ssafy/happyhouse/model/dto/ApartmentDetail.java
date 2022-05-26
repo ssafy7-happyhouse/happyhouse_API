@@ -23,4 +23,6 @@ public class ApartmentDetail {
 	private int dealMonth;
 	private String area;
 	private String floor;
+	private String lat;
+	private String lng;
 }
