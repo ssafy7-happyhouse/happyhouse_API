@@ -9,5 +9,9 @@ import com.ssafy.happyhouse.model.dto.User2;
 @Mapper
 public interface ManagementMapper {
 	public List<User2> selectAllUserList() ;
+	public int selectCountBoardById(int id) ;
+	public int deleteAllBoardById(int id) ;
+	public List<Integer> selectCommentInBoardById(int id) ;
+	public int deleteCommentInBoardByBoardNo(int board_no) ;
 
 }
