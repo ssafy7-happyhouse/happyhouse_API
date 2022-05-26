@@ -16,4 +16,20 @@ public class ManagementService {
 		public List<User2> selectAllUserList(){
 			return managementMapper.selectAllUserList();
 		}
+		
+		public int selectCountBoardById(int id){
+			return managementMapper.selectCountBoardById(id);
+		}
+		
+		public int deleteAllBoardById(int id){
+			return managementMapper.deleteAllBoardById(id);
+		}
+		
+		public List<Integer> selectCommentInBoardById(int id){
+			return managementMapper.selectCommentInBoardById(id);
+		}
+		
+		public int deleteCommentInBoardByBoardNo(int board_no){
+			return managementMapper.deleteCommentInBoardByBoardNo(board_no);
+		}
 }

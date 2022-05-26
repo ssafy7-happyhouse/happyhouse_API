@@ -11,4 +11,30 @@
 		address, phone, favorite
 		from user
 	</select>
+	
+	<select id="selectCountBoardById" parameterType="int" resultType="int">
+		select count(*)
+		from user as u
+		join board as b
+		on u.id = b.user_id
+		where u.id = #{id}
+	</select>
+	
+	<delete id="deleteAllBoardById" parameterType="int">
+		delete from board
+		where user_id = #{id}
+	</delete>
+	
+		<select id="selectCommentInBoardById" parameterType="int" resultType="int">
+		select b.no as no
+		from board as b
+		join comment as c
+		on b.no = c.board_no
+		where b.user_id = #{id};
+	</select>
+	
+	<delete id="deleteCommentInBoardByBoardNo" parameterType="int">
+		delete from comment
+	where board_no = #{board_no}
+	</delete>
 </mapper>
